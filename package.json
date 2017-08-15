@@ -1,0 +1,47 @@
+{
+  "name": "pg-lazy",
+  "version": "1.0.0",
+  "description": "Helpers for node-postgres for Lazy devs",
+  "main": "src/index.js",
+  "directories": {
+    "src": "src",
+    "test": "test"
+  },
+  "scripts": {
+    "lint": "node_modules/.bin/standard 'src/**.js' 'test/**.js' --fix",
+    "test": "node_modules/.bin/ava",
+    "patch": "npm version patch && npm publish",
+    "minor": "npm version minor && npm publish",
+    "major": "npm version major && npm publish",
+    "postpublish": "git push origin master --follow-tags",
+    "deploy": "git pull --rebase origin master && git push origin master"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uniibu/pg-Lazy.git"
+  },
+  "devDependencies": {
+    "ava": "^0.16.0",
+    "pg": "^7.1.2",
+    "standard": "^10.0.2"
+  },
+  "keywords": [
+    "node-pg",
+    "pg",
+    "postgres",
+    "helpers",
+    "one",
+    "many",
+    "none",
+    "async",
+    "await",
+    "promises",
+    "psql"
+  ],
+  "author": "unibtc@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uniibu/pg-Lazy/issues"
+  },
+  "homepage": "https://github.com/uniibu/pg-Lazy#readme"
+}
