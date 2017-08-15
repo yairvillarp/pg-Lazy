@@ -1,7 +1,7 @@
 
-Requires Node v8.x and node-pg >= 7.1.2
+`Requires Node v8.x and node-pg >= 7.1.2`
 
-# pg-extra [![Build Status](https://travis-ci.org/uniibu/pg-Lazy.svg?branch=master)](https://travis-ci.org/uniibu/pg-Lazy) [![NPM version](https://badge.fury.io/js/pg-Lazy.svg)](http://badge.fury.io/js/pg-Lazy) [![Dependency Status](https://david-dm.org/uniibu/pg-Lazy.svg)](https://david-dm.org/uniibu/pg-Lazy)
+# pg-extra [![Build Status](https://travis-ci.org/uniibu/pg-lazy.svg?branch=master)](https://travis-ci.org/uniibu/pg-lazy) [![NPM version](https://badge.fury.io/js/pg-lazy.svg)](http://badge.fury.io/js/pg-lazy) [![Dependency Status](https://david-dm.org/uniibu/pg-lazy.svg)](https://david-dm.org/uniibu/pg-lazy)
 
 Nothin complex here, just simple helpers for [node-postgres][node-postgres].
 
