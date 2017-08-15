@@ -21,7 +21,7 @@
     "url": "git+https://github.com/uniibu/pg-Lazy.git"
   },
   "devDependencies": {
-    "ava": "^0.16.0",
+    "ava": "^0.22.0",
     "pg": "^7.1.2",
     "standard": "^10.0.2"
   },
