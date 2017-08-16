@@ -1,5 +1,5 @@
 
-`Requires Node ^7.10.1 or >= 8.1.4 and node-pg ^7.1.2`
+`Requires Node ^7.10.1 or >= 8.1.4 and node-postgres ^7.1.2`
 
 # pg-Lazy [![Build Status](https://travis-ci.org/uniibu/pg-Lazy.svg?branch=master)](https://travis-ci.org/uniibu/pg-Lazy) [![NPM version](https://badge.fury.io/js/pg-lazy.svg)](http://badge.fury.io/js/pg-lazy) [![Dependency Status](https://david-dm.org/uniibu/pg-lazy.svg)](https://david-dm.org/uniibu/pg-lazy) [![Greenkeeper badge](https://badges.greenkeeper.io/uniibu/pg-Lazy.svg)](https://greenkeeper.io/)
 
