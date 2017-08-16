@@ -1,31 +1,25 @@
 
-`Requires Node v8.x and node-pg >= 7.1.2`
+`Requires Node ^7.10.1 or >= 8.1.4 and node-pg ^7.1.2`
 
-# pg-Lazy [![Build Status](https://travis-ci.org/uniibu/pg-Lazy.svg?branch=master)](https://travis-ci.org/uniibu/pg-Lazy) [![NPM version](https://badge.fury.io/js/pg-lazy.svg)](http://badge.fury.io/js/pg-lazy) [![Dependency Status](https://david-dm.org/uniibu/pg-lazy.svg)](https://david-dm.org/uniibu/pg-lazy)
+# pg-Lazy [![Build Status](https://travis-ci.org/uniibu/pg-Lazy.svg?branch=master)](https://travis-ci.org/uniibu/pg-Lazy) [![NPM version](https://badge.fury.io/js/pg-lazy.svg)](http://badge.fury.io/js/pg-lazy) [![Dependency Status](https://david-dm.org/uniibu/pg-lazy.svg)](https://david-dm.org/uniibu/pg-lazy) [![Greenkeeper badge](https://badges.greenkeeper.io/uniibu/pg-Lazy.svg)](https://greenkeeper.io/)
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/uniibu/pg-Lazy.svg)](https://greenkeeper.io/)
+[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
 
-Nothin complex here, just simple helpers for [node-postgres][node-postgres].
+
+Nothing complex here, just simple helpers for [node-postgres][node-postgres] heavily inspired by [pg-extra](https://github.com/danneu/pg-extra).
 
 ## Installation
 
-`npm install pg-lazy`
+`npm install pg-lazy pg --save`
 
 ## Usage
 
 ```js
 const pgLazy = require('pg-lazy');
 // create your configuration
-const connectionString = 'postgres://localhost:5432/pg_extra_test';
-// pool/client instance is already initiated, you can still initialize it using pg.Pool or pg.Client
-const { pool, sql, _raw, pg } = pgLazy(require('pg'), 'pool', { connectionString }, counter, onErr);
-
-function onErr(err) {
-  console.warn(err.stack || err.message);
-}
-function counter(totalinfo) {
-  console.log(totalinfo);
-}
+const connectionString = 'postgres://localhost:5432/pg_test';
+// pool instance is already initiated, you can still initialize it using pg.Pool 
+const { pool, sql, _raw, pg } = pgLazy(require('pg'), { connectionString });
 
 async function getUser(name,id){
   // regular query
@@ -44,8 +38,8 @@ async function(){
 
 ## Helpers
 
-- pg.Pool with prototype methods `query`,`many`, `one`, `none`, `withTransaction`.
-- pg.Client with prototype methods `query`,`many`, `one`, `none`.
+- pg.Pool with prototype methods `query`,`many`, `one`, `none`, `withTransaction`, `isConnected`.
+- pg.Client with prototype methods `query`,`many`, `one`, `none`, `isConnected`.
 - Extends both with `.prepared(name).{query,many,one}()`
 - All methods returns a Promise
 - Automatically defaults to Environment variables for DB config, that means you
@@ -71,16 +65,12 @@ async function(){
   sql injection with template literals. If you want normal template literal
   behavior (dumb interpolation), you must tag it with `_raw`.
 
-## Install
-
-    npm install --save pg-Lazy pg
-
-## Usage / Example
+## Example
 
 ``` javascript
 const pgLazy = require('pg-lazy');
 const url = 'postgres://user:pass@localhost:5432/my-db'
-const { pool, sql, _raw, pg } = pgLazy(require('pg'), 'pool', { connectionString:url });
+const { pool, sql, _raw, pg } = pgLazy(require('pg'), { connectionString:url });
 
 exports.findUserByUname = async function (uname) {
   return pool.one(sql`
@@ -109,6 +99,8 @@ exports.transferBalance = async function (from, to, amount) {
   })
 }
 ```
+
+Check more examples on the Test folder
 
 ### Query template tags
 
@@ -170,6 +162,10 @@ Then run the tests:
 - Add more Helpers
 
 [node-postgres]: https://github.com/brianc/node-postgres
+
+## Changelog
+
+[ChangeLog](https://github.com/uniibu/pg-Lazy/blob/master/CHANGELOG.md)
 
 ## Shouts
 

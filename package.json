@@ -1,6 +1,6 @@
 {
   "name": "pg-lazy",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Helpers for node-postgres for Lazy devs",
   "main": "src/index.js",
   "directories": {
@@ -8,20 +8,20 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "node_modules/.bin/standard 'src/**.js' 'test/**.js' --fix",
-    "test": "node_modules/.bin/ava",
+    "lint": "standard 'src/**.js' 'test/**.js' --fix --env jest",
+    "test": "npm run lint && jest --colors",
     "patch": "npm version patch && npm publish",
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish",
-    "postpublish": "git push origin master --follow-tags",
-    "deploy": "git pull --rebase origin master && git push origin master"
+    "postpublish": "npm run lint && git push origin master --follow-tags",
+    "deploy": "git pull --rebase origin master && npm run lint && git push origin master"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uniibu/pg-Lazy.git"
   },
   "devDependencies": {
-    "ava": "^0.16.0",
+    "jest": "^20.0.4",
     "pg": "^7.1.2",
     "standard": "^10.0.2"
   },
@@ -43,5 +43,25 @@
   "bugs": {
     "url": "https://github.com/uniibu/pg-Lazy/issues"
   },
-  "homepage": "https://github.com/uniibu/pg-Lazy#readme"
+  "homepage": "https://github.com/uniibu/pg-Lazy#readme",
+  "dependencies": {},
+  "jest": {
+    "verbose": true,
+    "collectCoverage": true,
+    "coverageThreshold": {
+      "global": {
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    },
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "resetModules": true,
+    "testEnvironment": "node"
+  },
+  "engine": {
+    "node": "^7.10.1 || >= 8.1.4"
+  }
 }
