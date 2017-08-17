@@ -44,7 +44,7 @@ const many = async function (sql, params) {
 }
 const one = async function (sql, params) {
   const result = await this.query(sql, params)
-  isTrue(result.rows.length === 1, ' Got more than 1 result')
+  isTrue(result.rows.length =< 1, ' Got more than 1 result')
   return result.rows[0]
 }
 const none = async function (sql, params) {
