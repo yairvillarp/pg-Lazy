@@ -1,3 +1,6 @@
+### Minor Patch v1.0.3 Aug 17, 2017
+* Fix one method to allow less than 1 result
+
 ### Minor Patch v1.0.2 Aug 17, 2017
 * Removed `timertask` that used to call a function given and returns the `pool.totalCount, pool.idleCount, pool.waitingCount`
   Since those are still exposed via pg, let the user call them if needed.
