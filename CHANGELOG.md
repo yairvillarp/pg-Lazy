@@ -1,4 +1,4 @@
-### Minor Patch v1.0.3 Aug 17, 2017
+### Minor Patch v1.0.3 - v1.0.4 Aug 17, 2017
 * Fix one method to allow less than 1 result
 
 ### Minor Patch v1.0.2 Aug 17, 2017
