@@ -1,13 +1,3 @@
-/**
- * Use Environment variables for configuration
- * PGHOST='localhost'
- * PGUSER=process.env.USER
- * PGDATABASE=process.env.USER
- * PGPASSWORD=null
- * PGPORT=5432
- *
- */
-
 const defaultOpts = {
   user: process.env.USER || process.env.LOGNAME || process.env.USERNAME,
   host: '127.0.0.1',
@@ -50,7 +40,7 @@ const one = async function(sql, params) {
 const none = async function(sql, params) {
   const result = await this.query(sql, params);
   isTrue(!result.rows.length, ' Got some rows, expected it to be none');
-  // if no result is expected, return true
+    // if no result is expected, return true
   return true;
 };
 const isConnected = async function() {
@@ -84,7 +74,7 @@ const withTransaction = async function(runner) {
     }
     client.release();
     if (err.code === '40P01' || err.code === '40001') {
-      // Deadlock or Serialization error
+            // Deadlock or Serialization error
       return withTransaction(runner);
     }
     err.rolledback = true;
@@ -155,29 +145,34 @@ function extend(pg) {
 // ========================================================
 // Parameters: (node-pg, config = defaults to env)
 // Returns: {pool,pg, sql, _raw}
-const pgLazy = (pg, config) => {
-  isTrue(pg, 'node-postgres is missing');
-  const superPg = extend(pg);
-  let pool;
-  let settings = {};
-  if (config && config.constructor === Object) {
-    if (config['connectionString']) {
-      settings = config;
+const pgLazy = (pg, config, extraconfig = {}) => {
+  if (pg) {
+    const superPg = extend(pg);
+    let pool;
+    let settings = {};
+    if (config && config.constructor === Object) {
+      if (config['connectionString']) {
+        settings = config;
+      } else {
+        settings = Object.assign(defaultOpts, config);
+      }
+    } else if (config && config.constructor === String) {
+      throw new Error('Configuration settings must be an object');
     } else {
-      settings = Object.assign(defaultOpts, config);
+      settings = {
+        user: process.env.PGUSER || defaultOpts.user,
+        host: process.env.PGHOST || defaultOpts.host,
+        database: process.env.PGDATABASE || defaultOpts.database,
+        password: process.env.PGPASSWORD || defaultOpts.password,
+        port: process.env.PGPORT || defaultOpts.port
+      };
     }
-  } else if (config && config.constructor === String) {
-    throw new Error('Configuration settings must be an object');
-  } else {
-    console.warn('No configuration settings passed, will use environment variables if available');
-  }
-  if (Object.keys(settings).length < 1) {
-    pool = new superPg.Pool();
-  } else {
+    settings = Object.assign(settings, extraconfig);
     pool = new superPg.Pool(settings);
+    return { pool, pg: superPg, sql, _raw };
+  } else {
+    return { sql, _raw };
   }
-
-  return { pool, pg: superPg, sql, _raw };
 };
 
 module.exports = pgLazy;
