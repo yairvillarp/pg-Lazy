@@ -1,6 +1,6 @@
 {
   "name": "pg-lazy",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Helpers for node-postgres for Lazy devs",
   "main": "src/index.js",
   "directories": {
