@@ -56,7 +56,8 @@
   "homepage": "https://github.com/uniibu/pg-Lazy#readme",
   "dependencies": {
     "pg-minify": "^0.5.4",
-    "pg-pool": "^2.0.3"
+    "pg-pool": "^2.0.3",
+    "semver": "^5.5.0"
   },
   "engine": {
     "node": "^7.10.1 || ^8.1.4 || ^9.0.0 || ^10.0.0"
