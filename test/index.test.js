@@ -1,178 +1,196 @@
-// Parameters: (node-pg, type, config = defaults to env)
-// Returns: { pool, client, pg, sql, _raw };
+/* eslint-env node, mocha */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-unused-vars */
+const pgLazy = require('../index');
+const { connectionString, queryError } = require('./utils');
+const { expect } = require('chai');
+const { pg, Client, Pool, sql, _raw } = pgLazy(require('pg'), { connectionString, max: 50 });
 
-const pgLazy = require('../src')
-const connectionString = 'postgres://localhost:5432/pg_test'
-const { pool, sql, _raw, pg } = pgLazy(require('pg'), { connectionString, max: 50 })
-
-const { Client } = pg
+const pool = new Pool();
 
 async function withClient (runner) {
-  const client = new Client({ connectionString })
-  await client.connect()
+  const client = new Client();
+  await client.connect();
   try {
-    await runner(client)
+    await runner(client);
   } catch (err) {
-    console.warn(err.stack || err.message)
+    console.warn(err.stack || err.message);
   } finally {
-    await client.end()
+    await client.end();
   }
 }
+
 function cleanUp (p) {
-  p.end()
-  process.stdout.write('Shutting down Pool...\n\n')
+  p.end();
+  process.stdout.write('Shutting down Pool...\n\n');
 }
-afterAll(() => {
-  cleanUp(pool)
-})
+after(() => {
+  cleanUp(pool);
+});
 
 describe('INDEX.TEST', () => {
   describe('TEST CONNECTION', () => {
-    test.concurrent('test connection', async () => {
-      const { error, status } = await pool.isConnected()
-      expect(error).toBeUndefined()
-      expect(status).toEqual(true)
-    })
-  })
+    it('test connection', async () => {
+      const { error, status } = await pool.isConnected();
+      expect(error).to.be.undefined;
+      expect(status).to.be.true;
+    });
+  });
   // WITHOUT TAG
   describe('WITHOUT TAG', () => {
-    test.concurrent('pool.query() requires tagged query', async () => {
-      let err
+    it('pool.query() requires tagged query', async () => {
       try {
-        await pool.query('SELECT 1')
+        await pool.query('SELECT 1');
       } catch (e) {
-        err = e.message
+        expect(e.message).to.match(queryError);
       }
-      expect(err).toMatch(/must build/)
-    })
+    });
 
-    test.concurrent('client.query() requires tagged query', async () => {
+    it('client.query() requires tagged query', async () => {
       await withClient(async client => {
-        let err
         try {
-          await client.query('SELECT 1')
+          await client.query('SELECT 1');
         } catch (e) {
-          err = e.message
+          expect(e.message).to.match(queryError);
         }
-        expect(err).toMatch(/must build/)
-      })
-    })
+      });
+    });
 
-    test.concurrent('append() fails if untagged', async () => {
-      let err
+    it('append() fails if untagged', async () => {
       try {
-        await pool.query(sql`SELECT 1`.append('nope'))
+        await pool.query(sql`SELECT 1`.append('nope'));
       } catch (e) {
-        err = e.message
+        expect(e.message).to.match(queryError);
       }
-      expect(err).toMatch(/must build/)
-    })
-  })
+    });
+  });
   // WITH TAG
   describe('WITH TAG', () => {
-    test.concurrent('client.query() works with sql tag', async () => {
+    it('client.query() works with sql tag', async () => {
       await withClient(async client => {
-        const result = await client.query(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]}) ORDER BY n`)
-        expect(result.rows).toEqual([{ n: 1 }, { n: 3 }])
-      })
-    })
-    test.concurrent('client.query() works with _raw tag', async () => {
+        const result = await client.query(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]}) ORDER BY n`);
+        expect(result.rows).to.eql([{ n: 1 }, { n: 3 }]);
+      });
+    });
+    it('client.query() works with _raw tag', async () => {
       await withClient(async client => {
-        const result = await client.query(_raw`SELECT * FROM bars WHERE n IN (${1}, ${3}) ORDER BY n ${'desc'}`)
-        expect(result.rows).toEqual([{ n: 3 }, { n: 1 }])
-      })
-    })
+        const result = await client.query(_raw`SELECT * FROM bars WHERE n IN (${1}, ${3}) ORDER BY n ${'desc'}`);
+        expect(result.rows).to.eql([{ n: 3 }, { n: 1 }]);
+      });
+    });
 
-    test.concurrent('pool.query() works with sql tag', async () => {
-      const result = await pool.query(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]}) ORDER BY n`)
-      expect(result.rows).toEqual([{ n: 1 }, { n: 3 }])
-    })
+    it('pool.query() works with sql tag', async () => {
+      const result = await pool.query(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]}) ORDER BY n`);
+      expect(result.rows).to.eql([{ n: 1 }, { n: 3 }]);
+    });
 
-    test.concurrent('client.many() works with sql tag', async () => {
+    it('client.many() works with sql tag', async () => {
       await withClient(async client => {
-        const rows = await client.many(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]})`)
-        expect(rows).toEqual([{ n: 1 }, { n: 3 }])
-      })
-    })
+        const rows = await client.many(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]})`);
+        expect(rows).to.eql([{ n: 1 }, { n: 3 }]);
+      });
+    });
 
-    test.concurrent('pool.many() works with sql tag', async () => {
-      const rows = await pool.many(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]})`)
-      expect(rows).toEqual([{ n: 1 }, { n: 3 }])
-    })
+    it('pool.many() works with sql tag', async () => {
+      const rows = await pool.many(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]})`);
+      expect(rows).to.eql([{ n: 1 }, { n: 3 }]);
+    });
 
-    test.concurrent('client.one() works with sql tag', async () => {
+    it('client.one() works with sql tag', async () => {
       await withClient(async client => {
-        const row = await client.one(sql`SELECT * FROM bars WHERE n = ${2}`)
-        expect(row).toEqual({ n: 2 })
-      })
-    })
+        const row = await client.one(sql`SELECT * FROM bars WHERE n = ${2}`);
+        expect(row).to.eql({ n: 2 });
+      });
+    });
 
-    test.concurrent('pool.one() works with sql tag', async () => {
-      const row = await pool.one(sql`SELECT * FROM bars WHERE n = ${2}`)
-      expect(row).toEqual({ n: 2 })
-    })
+    it('pool.one() works with sql tag', async () => {
+      const row = await pool.one(sql`SELECT * FROM bars WHERE n = ${2}`);
+      expect(row).to.eql({ n: 2 });
+    });
 
-    test.concurrent('pool.none() works with sql tag', async () => {
-      const row = await pool.none(sql`SELECT * FROM bars WHERE n = 10`)
-      expect(row).toBeTruthy()
-    })
-  })
+    it('pool.none() works with sql tag', async () => {
+      const row = await pool.none(sql`SELECT * FROM bars WHERE n = 10`);
+      expect(row).to.be.true;
+    });
+  });
   // PARSING
   describe('PARSING', () => {
-    test.concurrent('parses int8 into Javascript integer', async () => {
-      const { n } = await pool.one(sql`SELECT 123::int8 n`)
+    it('parses int8 into Javascript integer', async () => {
+      const { n } = await pool.one(sql`SELECT 123::int8 n`);
       // this would be a string "123" without the setTypeParser(20) fix
-      expect(n).toBe(123)
-    })
+      expect(n).to.equal(123);
+    });
 
-    test.concurrent('parses numerics into Javascript floats', async () => {
-      const { n } = await pool.one(sql`SELECT 123::numeric n`)
+    it('parses numerics into Javascript floats', async () => {
+      const { n } = await pool.one(sql`SELECT 123::numeric n`);
       // this would be a string "123" without the setTypeParser(1700) fix
-      expect(n).toBe(123)
-    })
-  })
+      expect(n).to.equal(123);
+    });
+  });
   // PREPARED
   describe('PREPARED', () => {
-    test.concurrent('prepared() requires tag', async () => {
-      let err
+    it('prepared() requires tag', async () => {
       try {
-        await pool.prepared('foo').many(`select * from bars where n = ${1}`)
+        await pool.prepared('foo').many(`select * from bars where n = ${1}`);
       } catch (e) {
-        err = e.message
+        expect(e.message).to.match(queryError);
       }
-      expect(err).toMatch(/must build/)
-    })
+    });
 
-    test.concurrent('pool.prepared().query() works', async () => {
-      const result = await pool.prepared('foo').query(sql`select * from bars where n = ${1}`)
-      expect(result.rows).toEqual([{ n: 1 }])
-    })
-    test.concurrent('pool.prepared().many() works', async () => {
-      const rows = await pool.prepared('foo').many(sql`select * from bars where n = ${1}`)
-      expect(rows).toEqual([{ n: 1 }])
-    })
-    test.concurrent('pool.prepared().one() works', async () => {
-      const row = await pool.prepared('foo').one(sql`select * from bars where n = ${1}`)
-      expect(row).toEqual({ n: 1 })
-    })
-  })
+    it('pool.prepared().query() works', async () => {
+      const result = await pool.prepared('foo').query(sql`select * from bars where n = ${1}`);
+      expect(result.rows).to.eql([{ n: 1 }]);
+    });
+    it('pool.prepared().many() works', async () => {
+      const rows = await pool.prepared('foo').many(sql`select * from bars where n = ${1}`);
+      expect(rows).to.eql([{ n: 1 }]);
+    });
+    it('pool.prepared().one() works', async () => {
+      const row = await pool.prepared('foo').one(sql`select * from bars where n = ${1}`);
+      expect(row).to.eql({ n: 1 });
+    });
+  });
   // TRANSACTION
   describe('TRANSACTION', () => {
-    test.concurrent('withTransaction sanity check', async () => {
+    it('withTransaction sanity check', async () => {
       await pool.withTransaction(async client => {
-        const { n } = await client.one(sql`SELECT 1 n`)
-        expect(n).toBe(1)
-      })
-    })
+        const { n } = await client.one(sql`SELECT 1 n`);
+        expect(n).to.equal(1);
+      });
+    });
 
-    test.concurrent('withTransaction can successfully rollback', async () => {
+    it('withTransaction can successfully rollback', async () => {
       try {
         await pool.withTransaction(async () => {
-          throw new Error('fake error')
-        })
+          throw new Error('fake error');
+        });
       } catch (err) {
-        return expect(err.rolledback).toBeTruthy()
+        return expect(err.rolledback).to.be.true;
       }
-    })
-  })
-})
+    });
+  });
+  // SINGLETON
+  describe('SINGLETON', () => {
+    it('pool should already be connected and initialized', async () => {
+      const p = pgLazy(require('pg'), { connectionString, max: 50 }, { singleton: true });
+
+      const { error, status } = await p.pool.isConnected();
+      expect(error).to.be.undefined;
+      expect(status).to.be.true;
+
+      const result = await p.pool.query(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]}) ORDER BY n`);
+      expect(result.rows).to.eql([{ n: 1 }, { n: 3 }]);
+      p.pool.end();
+    });
+  });
+  // SANITY
+  describe('SANITY', () => {
+    it('should throw on missing pg module', async () => {
+      try {
+        const p = pgLazy();
+      } catch (e) {
+        expect(e).to.match(/missing required module `pg`/);
+      }
+    });
+  });
+});

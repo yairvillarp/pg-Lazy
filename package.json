@@ -1,29 +1,39 @@
 {
   "name": "pg-lazy",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Helpers for node-postgres for Lazy devs",
-  "main": "src/index.js",
+  "main": "index.js",
   "directories": {
     "src": "src",
     "test": "test"
   },
   "scripts": {
-    "lint": "standard 'src/**.js' 'test/**.js' --fix --env jest",
-    "test": "npm run lint && jest --colors",
+    "lint": "semistandard 'src/**.js' 'test/**.js' --fix",
+    "test": "npm run lint && mocha --reporter spec",
+    "test:cov": "npm run lint && nyc mocha",
+    "test:travis": "npm run lint && nyc mocha --report lcovonly",
     "patch": "npm version patch && npm publish",
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish",
     "postpublish": "npm run lint && git push origin master --follow-tags",
     "deploy": "git pull --rebase origin master && npm run lint && git push origin master"
   },
+  "semistandard": {
+    "env": [
+      "mocha",
+      "es6"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uniibu/pg-Lazy.git"
   },
   "devDependencies": {
-    "jest": "^21.0.0",
-    "pg": "^7.1.2",
-    "standard": "^11.0.0"
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.1",
+    "pg": "^7.4.1",
+    "semistandard": "^12.0.1"
   },
   "keywords": [
     "node-pg",
@@ -44,24 +54,11 @@
     "url": "https://github.com/uniibu/pg-Lazy/issues"
   },
   "homepage": "https://github.com/uniibu/pg-Lazy#readme",
-  "dependencies": {},
-  "jest": {
-    "verbose": true,
-    "collectCoverage": true,
-    "coverageThreshold": {
-      "global": {
-        "functions": 90,
-        "lines": 90,
-        "statements": 90
-      }
-    },
-    "moduleFileExtensions": [
-      "js"
-    ],
-    "resetModules": true,
-    "testEnvironment": "node"
+  "dependencies": {
+    "pg-minify": "^0.5.4",
+    "pg-pool": "^2.0.3"
   },
   "engine": {
-    "node": "^7.10.1 || >= 8.1.4"
+    "node": "^7.10.1 || ^8.1.4 || ^9.0.0 || ^10.0.0"
   }
 }

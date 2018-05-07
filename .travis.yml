@@ -2,11 +2,14 @@ language: node_js
 node_js:
   - "7"
   - "8"
+  - "9"
+  - "10"
 services:
   - postgresql
 addons:
-  postgresql: "9.4"
+  postgresql: "9.6"
 before_script:
-  - psql -c 'create database pg_test;' -U postgres
-  - psql -d pg_test -c 'create table bars (n int not null);' -U postgres
-  - psql -d pg_test -c 'insert into bars (n) values (1), (2), (3);' -U postgres
+  - psql -c 'create user lazy_test_user with password '"'lazy_test_pw'"';' -U postgres
+  - psql -c 'create database lazy_test owner lazy_test_user;' -U postgres
+  - psql -d lazy_test -c 'create table bars (n int not null);' -U lazy_test_user
+  - psql -d lazy_test -c 'insert into bars (n) values (1), (2), (3);' -U lazy_test_user

@@ -1,12 +1,20 @@
 
-`Requires Node ^7.10.1 or >= 8.1.4 and node-postgres ^7.1.2`
+`Requires Node ^7.10.1 or >= 8.1.4 or ^9.0.0 or ^10.0.0 and node-postgres ^7.4.1`
 
 # pg-Lazy [![Build Status](https://travis-ci.org/uniibu/pg-Lazy.svg?branch=master)](https://travis-ci.org/uniibu/pg-Lazy) [![NPM version](https://badge.fury.io/js/pg-lazy.svg)](http://badge.fury.io/js/pg-lazy) [![Dependency Status](https://david-dm.org/uniibu/pg-lazy.svg)](https://david-dm.org/uniibu/pg-lazy) [![Greenkeeper badge](https://badges.greenkeeper.io/uniibu/pg-Lazy.svg)](https://greenkeeper.io/)
 
-[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
+[![js-semistandard-style](https://cdn.rawgit.com/flet/semistandard/master/badge.svg)](https://github.com/Flet/semistandard)
 
 
 Nothing complex here, just simple helpers for [node-postgres][node-postgres] heavily inspired by [pg-extra](https://github.com/danneu/pg-extra).
+
+## Breaking Changes from v1.x.x to v2.x.x
+
+- This module no longer mutates pg.Pool and pg.Client, it instead `extends` them and store them as `pg._Pool` and `pg._Client`
+- It no longer automatically initialize the `Pool` unless a third Object argument is passed `{singleton:true}`
+- `pg-Lazy` now returns a default Object `{ pg, Pool, Client, sql, _raw }` in which `Pool` is an instance of `pg._Pool` and Client is an instance of `pg._Client`. To get the original `pg.Pool` and `pg.Client` instances, you can use `pg` to access them.
+- If `{singleton:true}` is passed as a third argument, it then adds `pool` from the returned Object. This `pool` is an already-initialized `pg._Pool`
+- Read more changes here [ChangeLog](https://github.com/uniibu/pg-Lazy/blob/master/CHANGELOG.md)
 
 ## Installation
 
@@ -14,13 +22,14 @@ Nothing complex here, just simple helpers for [node-postgres][node-postgres] hea
 
 ## Usage
 
+Manual Pool initialization:
 ```js
 const pgLazy = require('pg-lazy');
 // create your configuration
 const connectionString = 'postgres://localhost:5432/pg_test';
-// pool instance is already initiated, you can still initialize it using pg.Pool 
-const { pool, sql, _raw, pg } = pgLazy(require('pg'), { connectionString });
-
+// pool instance is no longer initiated, you must initialize it using pg.Pool.
+const { Pool, sql, _raw, pg } = pgLazy(require('pg'), { connectionString });
+const pool = new Pool()
 async function getUser(name,id){
   // regular query
   return pool.query(sql`SELECT * FROM TABLE WHERE name = ${name}`);
@@ -36,6 +45,28 @@ async function(){
 }
 ```
 
+Automatic Pool initialization:
+```js
+const pgLazy = require('pg-lazy');
+// create your configuration
+const connectionString = 'postgres://localhost:5432/pg_test';
+// pool instance is automatically initialized when passing {singleton:true}
+const { pool, sql, _raw, pg } = pgLazy(require('pg'), { connectionString }, {singleton:true});
+
+async function getUser(name,id){
+  // regular query
+  return pool.query(sql`SELECT * FROM TABLE WHERE name = ${name}`);
+  // many for more than 1 result
+  return pool.many(sql`SELECT * FROM TABLE WHERE id > ${id}`);
+  // one for single result
+  return pool.one(sql`SELECT * FROM TABLE WHERE id = ${id}`);
+  // none for no result
+  return pool.many(sql`SELECT * FROM TABLE WHERE id < 0`);
+}
+async function(){
+  const username = await getUser('john',5)
+}
+```
 ## Helpers
 
 - pg.Pool with prototype methods `query`,`many`, `one`, `none`, `withTransaction`, `isConnected`.
@@ -46,7 +77,7 @@ async function(){
   can also set your DB config via `process.env`
 - Configures the client parser to parse postgres ints and numerics
   into javascript numbers (else `SELECT 1::int8` would return a string "1").
-- Accepts Objects and connectionString for configuration, 
+- Accepts String, Objects and connectionString for configuration, 
 - Exposes `sql` and `_raw` template literal helpers for writing queries.
 
     ``` javascript
@@ -70,7 +101,7 @@ async function(){
 ``` javascript
 const pgLazy = require('pg-lazy');
 const url = 'postgres://user:pass@localhost:5432/my-db'
-const { pool, sql, _raw, pg } = pgLazy(require('pg'), { connectionString:url });
+const { pool, sql, _raw, pg } = pgLazy(require('pg'), { connectionString:url },{ singleton:true });
 
 exports.findUserByUname = async function (uname) {
   return pool.one(sql`
@@ -148,20 +179,14 @@ _raw`${'foo'} ${'bar'}`.append(sql`${'baz'}`) // 'foo bar $1'
 
 Setup local postgres database with seeded rows that the tests expect:
 
-    $ createdb pg_test
-    $ psql pg_test
-    $ psql -d pg_test -c 'create table bars (n int not null);'
-    $ psql -d pg_test -c 'insert into bars (n) values (1), (2), (3);'
+  - psql -c 'create user lazy_test_user with password '"'lazy_test_pw'"';' -U postgres
+  - psql -c 'create database lazy_test owner lazy_test_user;' -U postgres
+  - psql -d lazy_test -c 'create table bars (n int not null);' -U lazy_test_user
+  - psql -d lazy_test -c 'insert into bars (n) values (1), (2), (3);' -U lazy_test_user
 
 Then run the tests:
 
-    npm test
-
-## TODO
-
-- Add more Helpers
-
-[node-postgres]: https://github.com/brianc/node-postgres
+    `yarn test` or `npm test`
 
 ## Changelog
 
@@ -169,4 +194,4 @@ Then run the tests:
 
 ## Shouts
 
-- Heavily inspired by [pg-extra](https://github.com/danneu/pg-extra) which no longer been updated for several months, and now breaks on latest pg 7.
+- Heavily inspired by [pg-extra](https://github.com/danneu/pg-extra).

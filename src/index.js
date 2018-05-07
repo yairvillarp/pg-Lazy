@@ -1,28 +1,59 @@
-const resolve = require('path').resolve
-const nodeV = process.version
+const SqlStatement = require('./SqlStatement');
+const PgPool = require('pg-pool');
+const Prepared = require('./Prepared');
+const { many, one, none, isConnected, withTransaction } = require('./Methods');
+const { parseConfig, PgLazyError } = require('./utils');
 
-const majorNodeV = Number.parseInt(nodeV.split('.').shift().replace(/[^0-9.]/g, ''))
-if (majorNodeV < 7) {
-  throw new Error(
-        [
-          '[pgLazy:Error] Node version mismatch.',
-          `Installed: ${nodeV}`,
-          'Required: ^7.10.1 || >= 8.1.4',
-          'Please install the latest node version'
-        ].join('\n')
-    )
-}
-const rootpkg = resolve(process.cwd(), './package.json')
-const { dependencies, devDependencies } = require(rootpkg)
-const pgmod = dependencies.pg || devDependencies.pg
+const pgExtend = (pg, name, settings, methods) => {
+  const pgOpts = { class: pg.Client, options: settings };
+  if (name === 'BoundPool') {
+    pgOpts.class = PgPool;
+    pgOpts.options = { Client: pg._Client, ...settings };
+  }
+  const Base = class extends pgOpts.class {
+    constructor (opts = {}) {
+      super({ ...pgOpts.options, ...opts });
+    }
+    _query (...args) {
+      return super.query(...args);
+    }
+    query (statement, _, cb) {
+      const self = this;
+      if (typeof cb === 'function') {
+        return self._query.apply(self, arguments);
+      }
+      SqlStatement.check(statement, true);
+      return self._query(statement);
+    }
+    prepared (name) {
+      return new Prepared(name, this.query.bind(this));
+    }
+  };
+  for (const [k, v] of Object.entries(methods)) {
+    Base.prototype[k] = v;
+  }
+  Object.defineProperty(Base, 'name', { value: name });
+  return Base;
+};
 
-if (!pgmod) {
-  throw new Error(['[pgLazy:Error]', 'node-postgres is missing from package.json'].join('\n'))
-}
+module.exports = (pg, config, extraConfig = {}) => {
+  if (pg) {
+    const settings = parseConfig(config, extraConfig);
+    pg._Client = pgExtend(pg, 'Client', settings, { many, one, none, isConnected });
+    pg._Pool = pgExtend(pg, 'BoundPool', settings, { many, one, none, isConnected, withTransaction });
+    pg.types.setTypeParser(20, (val) => {
+      return val === null ? null : Number.parseInt(val, 10);
+    });
+    pg.types.setTypeParser(1700, (val) => {
+      return val === null ? null : Number.parseFloat(val);
+    });
+    const payload = { pg, Pool: pg._Pool, Client: pg._Client, sql: SqlStatement.sql, _raw: SqlStatement._raw };
 
-const majorV = Number.parseInt(pgmod.split('.').shift().replace(/[^0-9.]/g, ''))
-if (majorV < 7) {
-  throw new Error(['[pgLazy:Error]', 'node-postgres mismatch, please install the latest node-postgres'].join('\n'))
-}
-
-module.exports = require('./pgLazy')
+    if (extraConfig.singleton && extraConfig.singleton === true) {
+      payload.pool = new pg._Pool();
+    }
+    return payload;
+  } else {
+    throw new PgLazyError('missing required module `pg`');
+  }
+};

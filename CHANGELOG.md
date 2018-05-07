@@ -1,3 +1,20 @@
+### Major Update and Breaking Changes v2.0.0 May 7, 2018
+* No longer mutates pg.Pool and pg.Client
+* Uses es6 `class extends`
+* Does not directly extends pg.Pool, instead requires `pg-pool` and extends it.
+* It extends pg.Pool and pg.Client with the helpers and put them on pg._Pool and pg._Client.
+* No longer automatically initializes Pool, a third argument with {singleton:true} is required to auto initiaze and returns `pool`
+  Otherwise, it does not return `pool`, and you must initialize it your self.
+* Errors are now an instance of `PgLazyError`
+* Configuration now accepts String and Object. String configurations are treated as a connectionString.
+* If no configuration is passed, uses Environment variables if available, otherwise it throws.
+* Code modularization
+* Sql statement minification using `pg-minify`
+* Change unit test from `Jest` to `Mocha` and `Chai`
+* Added nyc for coverage testing
+* Change standard to semistandard
+* Replace `npm` with `yarn`
+
 ### Minor Patch v1.0.3 - v1.0.4 Aug 17, 2017
 * Fix one method to allow less than 1 result
 
