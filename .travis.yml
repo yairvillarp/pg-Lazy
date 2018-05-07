@@ -12,5 +12,5 @@ before_script:
   - psql -c 'create database lazy_test owner lazy_test_user;' -U postgres
   - psql -d lazy_test -c 'create table bars (n int not null);' -U lazy_test_user
   - psql -d lazy_test -c 'insert into bars (n) values (1), (2), (3);' -U lazy_test_user
-script: "npm run test:travis"
-after_script: "npm install coveralls@2 && cat ./coverage/lcov.info | coveralls"
+script: "npm run test"
+after_script: "npm install coveralls && npm run coverage"

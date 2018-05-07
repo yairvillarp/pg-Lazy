@@ -9,9 +9,8 @@
   },
   "scripts": {
     "lint": "semistandard 'src/**.js' 'test/**.js' --fix",
-    "test": "npm run lint && mocha --reporter spec",
-    "test:cov": "npm run lint && nyc mocha",
-    "test:travis": "npm run lint && nyc mocha --report lcovonly",
+    "test": "npm run lint && nyc mocha --reporter spec",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "patch": "npm version patch && npm publish",
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish",
