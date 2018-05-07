@@ -1,3 +1,6 @@
+### Minor Patch v2.0.0 - v2.0.1 May 7, 2018
+* Invalid npm published module
+
 ### Major Update and Breaking Changes v2.0.0 May 7, 2018
 * No longer mutates pg.Pool and pg.Client
 * Uses es6 `class extends`
