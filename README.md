@@ -1,5 +1,5 @@
 
-`Requires Node ^7.10.1 or >= 8.1.4 or ^9.0.0 or ^10.0.0 and node-postgres ^7.4.1`
+`Requires Node >= 8.1.4 or ^9.0.0 or ^10.0.0 and node-postgres ^7.4.1`
 
 # pg-Lazy [![Build Status](https://travis-ci.org/uniibu/pg-Lazy.svg?branch=master)](https://travis-ci.org/uniibu/pg-Lazy) [![NPM version](https://badge.fury.io/js/pg-lazy.svg)](http://badge.fury.io/js/pg-lazy) [![Dependency Status](https://david-dm.org/uniibu/pg-lazy.svg)](https://david-dm.org/uniibu/pg-lazy) [![Greenkeeper badge](https://badges.greenkeeper.io/uniibu/pg-Lazy.svg)](https://greenkeeper.io/)
 
@@ -10,6 +10,7 @@ Nothing complex here, just simple helpers for [node-postgres][node-postgres] hea
 
 ## Breaking Changes from v1.x.x to v2.x.x
 
+- Due to new es6 codes, this module now requires Node v8.1.4 and above.
 - This module no longer mutates pg.Pool and pg.Client, it instead `extends` them and store them as `pg._Pool` and `pg._Client`
 - It no longer automatically initialize the `Pool` unless a third Object argument is passed `{singleton:true}`
 - `pg-Lazy` now returns a default Object `{ pg, Pool, Client, sql, _raw }` in which `Pool` is an instance of `pg._Pool` and Client is an instance of `pg._Client`. To get the original `pg.Pool` and `pg.Client` instances, you can use `pg` to access them.

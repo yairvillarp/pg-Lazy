@@ -2,6 +2,7 @@
 * Invalid npm published module
 
 ### Major Update and Breaking Changes v2.0.0 May 7, 2018
+* Requires Node v8.1.4 and above
 * No longer mutates pg.Pool and pg.Client
 * Uses es6 `class extends`
 * Does not directly extends pg.Pool, instead requires `pg-pool` and extends it.
