@@ -3,7 +3,6 @@ const PgPool = require('pg-pool');
 const Prepared = require('./Prepared');
 const { many, one, none, isConnected, withTransaction } = require('./Methods');
 const { parseConfig, PgLazyError } = require('./utils');
-
 const pgExtend = (pg, name, settings, methods) => {
   const pgOpts = { class: pg.Client, options: settings };
   if (name === 'BoundPool') {
@@ -11,13 +10,13 @@ const pgExtend = (pg, name, settings, methods) => {
     pgOpts.options = { Client: pg._Client, ...settings };
   }
   const Base = class extends pgOpts.class {
-    constructor (opts = {}) {
+    constructor(opts = {}) {
       super({ ...pgOpts.options, ...opts });
     }
-    _query (...args) {
+    _query(...args) {
       return super.query(...args);
     }
-    query (statement, _, cb) {
+    query(statement, _, cb) {
       const self = this;
       if (typeof cb === 'function') {
         return self._query.apply(self, arguments);
@@ -25,7 +24,7 @@ const pgExtend = (pg, name, settings, methods) => {
       SqlStatement.check(statement, true);
       return self._query(statement);
     }
-    prepared (name) {
+    prepared(name) {
       return new Prepared(name, this.query.bind(this));
     }
   };
@@ -35,7 +34,6 @@ const pgExtend = (pg, name, settings, methods) => {
   Object.defineProperty(Base, 'name', { value: name });
   return Base;
 };
-
 module.exports = (pg, config, extraConfig = {}) => {
   if (pg) {
     const settings = parseConfig(config, extraConfig);
@@ -48,7 +46,6 @@ module.exports = (pg, config, extraConfig = {}) => {
       return val === null ? null : Number.parseFloat(val);
     });
     const payload = { pg, Pool: pg._Pool, Client: pg._Client, sql: SqlStatement.sql, _raw: SqlStatement._raw };
-
     if (extraConfig.singleton && extraConfig.singleton === true) {
       payload.pool = new pg._Pool();
     }

@@ -28,11 +28,9 @@ exports.isConnected = async function () {
   }
   return res;
 };
-
 exports.withTransaction = async function (runner) {
   const self = this;
   const client = await self.connect();
-
   let result;
   const rollback = async err => {
     try {
@@ -50,7 +48,6 @@ exports.withTransaction = async function (runner) {
     err.rolledback = true;
     throw new PgLazyError(err);
   };
-
   try {
     await client._query('BEGIN');
     result = await runner(client);

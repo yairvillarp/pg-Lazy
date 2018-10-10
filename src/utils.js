@@ -3,9 +3,8 @@ const { resolve } = require('path');
 const semver = require('semver');
 const mainPkgJson = require(resolve(process.cwd(), './package.json'));
 const modulePkgJson = require('../package.json');
-
 class PgLazyError extends Error {
-  constructor (errObj) {
+  constructor(errObj) {
     super();
     errObj = typeof errObj === 'string' ? { message: errObj, code: 'ERR_OCCURED' } : errObj;
     Object.assign(this, errObj);
@@ -14,7 +13,6 @@ class PgLazyError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
 }
-
 const checkVersions = () => {
   let currenPgVer;
   if (mainPkgJson.dependencies && mainPkgJson.dependencies.pg) {
@@ -24,9 +22,7 @@ const checkVersions = () => {
   } else {
     throw new PgLazyError({ message: 'Node-postgres is missing from package.json', code: 'ERR_MODULE_NOT_FOUND' });
   }
-
-  const versionRequirements = [
-    {
+  const versionRequirements = [{
       name: 'node',
       currentVersion: semver.valid(semver.coerce(process.version)),
       versionRequirement: semver.validRange(modulePkgJson.engine.node)
@@ -43,7 +39,6 @@ const checkVersions = () => {
     }
   }
 };
-
 const defaultOpts = {
   user: process.env.USER || process.env.LOGNAME || process.env.USERNAME,
   host: '127.0.0.1',
@@ -51,7 +46,6 @@ const defaultOpts = {
   password: null,
   port: 5432
 };
-
 const parseConfig = (config, extraConfig) => {
   let settings = {};
   if (config && config.constructor === Object) {
@@ -74,12 +68,10 @@ const parseConfig = (config, extraConfig) => {
   settings = Object.assign(settings, extraConfig);
   return settings;
 };
-
 const check = (condition, msg) => {
   if (condition) {
     return Promise.reject(new PgLazyError(msg));
   }
   return true;
 };
-
 module.exports = { PgLazyError, checkVersions, parseConfig, check };
