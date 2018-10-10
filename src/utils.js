@@ -4,7 +4,7 @@ const semver = require('semver');
 const mainPkgJson = require(resolve(process.cwd(), './package.json'));
 const modulePkgJson = require('../package.json');
 class PgLazyError extends Error {
-  constructor(errObj) {
+  constructor (errObj) {
     super();
     errObj = typeof errObj === 'string' ? { message: errObj, code: 'ERR_OCCURED' } : errObj;
     Object.assign(this, errObj);
@@ -23,15 +23,15 @@ const checkVersions = () => {
     throw new PgLazyError({ message: 'Node-postgres is missing from package.json', code: 'ERR_MODULE_NOT_FOUND' });
   }
   const versionRequirements = [{
-      name: 'node',
-      currentVersion: semver.valid(semver.coerce(process.version)),
-      versionRequirement: semver.validRange(modulePkgJson.engine.node)
-    },
-    {
-      name: 'pg',
-      currentVersion: semver.valid(semver.coerce(currenPgVer)),
-      versionRequirement: semver.validRange(modulePkgJson.devDependencies.pg)
-    }
+    name: 'node',
+    currentVersion: semver.valid(semver.coerce(process.version)),
+    versionRequirement: semver.validRange(modulePkgJson.engine.node)
+  },
+  {
+    name: 'pg',
+    currentVersion: semver.valid(semver.coerce(currenPgVer)),
+    versionRequirement: semver.validRange(modulePkgJson.devDependencies.pg)
+  }
   ];
   for (const vReq of versionRequirements) {
     if (!semver.satisfies(vReq.currentVersion, vReq.versionRequirement)) {
