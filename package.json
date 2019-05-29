@@ -1,6 +1,6 @@
 {
   "name": "pg-lazy",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "Helpers for node-postgres for Lazy devs",
   "main": "index.js",
   "directories": {
@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "semistandard 'src/**.js' 'test/**.js' --fix",
+    "lint": "semistandard 'src/**/*.js' 'test/**.js' --fix",
     "test": "npm run lint && nyc mocha --reporter spec",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "patch": "npm version patch && npm publish",
