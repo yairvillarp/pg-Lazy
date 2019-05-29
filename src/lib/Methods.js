@@ -1,10 +1,11 @@
-const { check, PgLazyError } = require('./utils');
+const { check, PgLazyError } = require('../utils');
 exports.many = async function (sql, params) {
   const result = await this.query(sql, params);
   return result.rows;
 };
 exports.one = async function (sql, params) {
   const result = await this.query(sql, params);
+
   check(result.rowCount > 1, 'one() result has more than one row, use many() instead');
   return result.rows[0];
 };

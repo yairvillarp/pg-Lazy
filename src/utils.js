@@ -4,7 +4,7 @@ const semver = require('semver');
 const mainPkgJson = require(resolve(process.cwd(), './package.json'));
 const modulePkgJson = require('../package.json');
 class PgLazyError extends Error {
-  constructor(errObj) {
+  constructor (errObj) {
     super();
     errObj = typeof errObj === 'string' ? { message: errObj, code: 'ERR_OCCURED' } : errObj;
     Object.assign(this, errObj);

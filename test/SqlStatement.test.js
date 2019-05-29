@@ -1,6 +1,6 @@
 /* eslint-env node, mocha */
 /* eslint-disable no-unused-expressions */
-const { sql, _raw } = require('../src/SqlStatement');
+const { sql, _raw } = require('../src/lib/SqlStatement');
 const { expect } = require('chai');
 const minify = require('pg-minify');
 describe('Interpolation', () => {

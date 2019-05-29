@@ -1,6 +1,6 @@
 /* eslint-env node, mocha */
 /* eslint-disable no-unused-expressions */
-const pgLazy = require('../index');
+const pgLazy = require('../');
 const { connectionString, connectionObject } = require('./utils');
 const { expect } = require('chai');
 const connectionString2 = 'postgres://localhost:5431/pg_test';

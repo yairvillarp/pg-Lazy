@@ -10,13 +10,13 @@ const pgExtend = (pg, name, settings, methods) => {
     pgOpts.options = { Client: pg._Client, ...settings };
   }
   const Base = class extends pgOpts.class {
-    constructor(opts = {}) {
+    constructor (opts = {}) {
       super({ ...pgOpts.options, ...opts });
     }
-    _query(...args) {
+    _query (...args) {
       return super.query(...args);
     }
-    query(statement, _, cb) {
+    query (statement, _, cb) {
       const self = this;
       if (typeof cb === 'function') {
         return self._query.apply(self, arguments);
@@ -24,7 +24,7 @@ const pgExtend = (pg, name, settings, methods) => {
       SqlStatement.check(statement, true);
       return self._query(statement);
     }
-    prepared(name) {
+    prepared (name) {
       return new Prepared(name, this.query.bind(this));
     }
   };

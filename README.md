@@ -1,12 +1,9 @@
+# pg-Lazy
+[![Build Status](https://travis-ci.org/uniibu/pg-Lazy.svg?branch=master)](https://travis-ci.org/uniibu/pg-Lazy) [![NPM version](https://badge.fury.io/js/pg-lazy.svg)](http://badge.fury.io/js/pg-lazy) [![Dependency Status](https://david-dm.org/uniibu/pg-lazy.svg)](https://david-dm.org/uniibu/pg-lazy) [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard) [![Coverage Status](https://coveralls.io/repos/github/uniibu/pg-Lazy/badge.svg?branch=master)](https://coveralls.io/github/uniibu/pg-Lazy?branch=master)
+
+Simple functional helpers for [node-postgres](https://www.npmjs.com/package/pg).
 
 `Requires Node >= 8.1.4 or ^9.0.0 or ^10.0.0 and node-postgres ^7.4.1`
-
-# pg-Lazy [![Build Status](https://travis-ci.org/uniibu/pg-Lazy.svg?branch=master)](https://travis-ci.org/uniibu/pg-Lazy) [![NPM version](https://badge.fury.io/js/pg-lazy.svg)](http://badge.fury.io/js/pg-lazy) [![Dependency Status](https://david-dm.org/uniibu/pg-lazy.svg)](https://david-dm.org/uniibu/pg-lazy) [![Greenkeeper badge](https://badges.greenkeeper.io/uniibu/pg-Lazy.svg)](https://greenkeeper.io/) [![Coverage Status](https://coveralls.io/repos/github/uniibu/pg-Lazy/badge.svg?branch=master)](https://coveralls.io/github/uniibu/pg-Lazy?branch=master)
-
-[![js-semistandard-style](https://cdn.rawgit.com/flet/semistandard/master/badge.svg)](https://github.com/Flet/semistandard)
-
-
-Nothing complex here, just simple helpers for [node-postgres][node-postgres] heavily inspired by [pg-extra](https://github.com/danneu/pg-extra).
 
 ## Breaking Changes from v1.x.x to v2.x.x
 
@@ -19,7 +16,7 @@ Nothing complex here, just simple helpers for [node-postgres][node-postgres] hea
 
 ## Installation
 
-`npm install pg-lazy pg --save`
+`npm install pg-lazy pg --save` or `yarn add pg-lazy pg`
 
 ## Usage
 
@@ -78,7 +75,7 @@ async function(){
   can also set your DB config via `process.env`
 - Configures the client parser to parse postgres ints and numerics
   into javascript numbers (else `SELECT 1::int8` would return a string "1").
-- Accepts String, Objects and connectionString for configuration, 
+- Accepts String, Objects and connectionString for configuration,
 - Exposes `sql` and `_raw` template literal helpers for writing queries.
 
     ``` javascript

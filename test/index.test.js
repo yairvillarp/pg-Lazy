@@ -1,7 +1,8 @@
 /* eslint-env node, mocha */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-unused-vars */
-const pgLazy = require('../index');
+const pgLazy = require('../');
+const { createTable, removeTable } = require('./init');
 const { connectionString, queryError } = require('./utils');
 const { expect } = require('chai');
 const { pg, Client, Pool, sql, _raw } = pgLazy(require('pg'), { connectionString, max: 50 });
@@ -26,6 +27,10 @@ function cleanUp (p) {
 }
 after(() => {
   cleanUp(pool);
+  removeTable();
+});
+before(() => {
+  createTable();
 });
 
 describe('INDEX.TEST', () => {
