@@ -1,11 +1,11 @@
 const SqlStatement = require('./SqlStatement');
 const { one, many } = require('./Methods');
 class Prepared {
-  constructor (name, toQuery) {
+  constructor(name, toQuery) {
     this.name = name;
     this.toQuery = toQuery;
   }
-  async query (statement) {
+  async query(statement) {
     SqlStatement.check(statement);
     return this.toQuery(statement.named(this.name));
   }
