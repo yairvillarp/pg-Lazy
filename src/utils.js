@@ -1,3 +1,4 @@
+const URL = require('url').URL;
 const { resolve } = require('path');
 const semver = require('semver');
 const mainPkgJson = require(resolve(process.cwd(), './package.json'));
