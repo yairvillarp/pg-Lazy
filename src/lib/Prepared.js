@@ -5,6 +5,7 @@ class Prepared {
     this.name = name;
     this.toQuery = toQuery;
   }
+
   async query (statement) {
     SqlStatement.check(statement);
     return this.toQuery(statement.named(this.name));

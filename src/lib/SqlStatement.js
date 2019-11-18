@@ -7,11 +7,13 @@ class SqlStatement {
     this.bindings = [];
     this._addValues(values);
   }
+
   static check (statement) {
     if (!(statement instanceof SqlStatement)) {
       throw new PgLazyError('must build query with sql or _raw');
     }
   }
+
   append (statement) {
     if (!statement) {
       return this;
@@ -25,10 +27,12 @@ class SqlStatement {
     this._addValues(statement.values);
     return this;
   }
+
   named (name) {
     this.name = name;
     return this;
   }
+
   get text () {
     const text = this.strings.reduce((prev, curr, i) => {
       const v = this.values[this.bindings[i - 1]];
@@ -38,6 +42,7 @@ class SqlStatement {
     });
     return minify(text);
   }
+
   _addValues (values) {
     for (const v of values) {
       const i = this.values.indexOf(v);

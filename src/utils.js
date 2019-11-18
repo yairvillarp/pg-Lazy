@@ -1,4 +1,3 @@
-const url = require('url');
 const { resolve } = require('path');
 const semver = require('semver');
 const mainPkgJson = require(resolve(process.cwd(), './package.json'));
@@ -55,7 +54,7 @@ const parseConfig = (config, extraConfig) => {
       settings = Object.assign(defaultOpts, config);
     }
   } else if (config && typeof config === 'string') {
-    const parsed = url.parse(config);
+    const parsed = new URL(config);
     if (parsed.protocol !== 'postgres:' || !parsed.hostname) {
       throw new PgLazyError('Invalid connection string');
     }

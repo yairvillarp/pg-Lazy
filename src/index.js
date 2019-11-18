@@ -13,9 +13,11 @@ const pgExtend = (pg, name, settings, methods) => {
     constructor (opts = {}) {
       super({ ...pgOpts.options, ...opts });
     }
+
     _query (...args) {
       return super.query(...args);
     }
+
     query (statement, _, cb) {
       const self = this;
       if (typeof cb === 'function') {
@@ -24,6 +26,7 @@ const pgExtend = (pg, name, settings, methods) => {
       SqlStatement.check(statement, true);
       return self._query(statement);
     }
+
     prepared (name) {
       return new Prepared(name, this.query.bind(this));
     }
