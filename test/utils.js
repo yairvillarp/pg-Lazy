@@ -1,5 +1,6 @@
 // a public sample database
-if (process.NODE_ENV === 'travis') {
+const isTravis = require('is-travis');
+if (isTravis) {
   module.exports = {
     connectionString: 'postgres://lazy_test_user:lazy_test_pw@localhost:5432/lazy_test',
     connectionObject: {
@@ -11,7 +12,7 @@ if (process.NODE_ENV === 'travis') {
     },
     queryError: /must build query with sql or _raw/
   };
-} else {
+} else if (!isTravis) {
   module.exports = {
     connectionString: 'postgres://tojrrrso:demc16cCK1w9MOJavZY6GEoDe-kj9y36@raja.db.elephantsql.com:5432/tojrrrso',
     connectionObject: {

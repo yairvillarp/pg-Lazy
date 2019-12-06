@@ -1,6 +1,6 @@
 {
   "name": "pg-lazy",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Helpers for node-postgres for Lazy devs",
   "main": "index.js",
   "directories": {
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "is-travis": "^2.0.0",
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "pg": "^7.14.0",
