@@ -12,7 +12,9 @@ if (isTravis) {
     },
     queryError: /must build query with sql or _raw/
   };
+
 } else if (!isTravis) {
+
   module.exports = {
     connectionString: 'postgres://tojrrrso:demc16cCK1w9MOJavZY6GEoDe-kj9y36@raja.db.elephantsql.com:5432/tojrrrso',
     connectionObject: {
