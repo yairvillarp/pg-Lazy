@@ -9,7 +9,5 @@ addons:
 before_script:
   - psql -c 'create user lazy_test_user with password '"'lazy_test_pw'"';' -U postgres
   - psql -c 'create database lazy_test owner lazy_test_user;' -U postgres
-  - psql -d lazy_test -c 'create table bars (n int not null);' -U lazy_test_user
-  - psql -d lazy_test -c 'insert into bars (n) values (1), (2), (3);' -U lazy_test_user
 script: "NODE_ENV=travis && npm run test"
 after_script: "npm install coveralls && npm run coverage"
