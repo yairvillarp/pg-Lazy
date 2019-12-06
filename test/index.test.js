@@ -5,7 +5,7 @@ const pgLazy = require('../');
 const { createTable, removeTable } = require('./init');
 const { connectionString, queryError } = require('./utils');
 const { expect } = require('chai');
-const { pg, Client, Pool, sql, _raw } = pgLazy(require('pg'), { connectionString, max: 50 });
+const { pg, Client, Pool, sql, _raw } = pgLazy(require('pg'), { connectionString, max: 5 });
 
 const pool = new Pool();
 
@@ -40,6 +40,21 @@ describe('INDEX.TEST', () => {
       expect(error).to.be.undefined;
       expect(status).to.be.true;
     });
+  });
+  describe('POOL CONECTIONS', () => {
+    it('pool works with multiple conenctions', async () => {
+      const tasks = [];
+      for (var x = 0; x < 5; x++) {
+        const t = pool.withTransaction(async client => {
+          return client.one(sql`SELECT 1 n`);
+        });
+        tasks.push(t);
+      }
+      const r = await Promise.all(tasks);
+      for (const result of r) {
+        expect(result.n).to.equal(1);
+      }
+    }).timeout(10000);
   });
   // WITHOUT TAG
   describe('WITHOUT TAG', () => {

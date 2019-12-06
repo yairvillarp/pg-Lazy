@@ -1,9 +1,11 @@
 const pgLazy = require('../');
 const { connectionString } = require('./utils');
 const { pool, _raw } = pgLazy(require('pg'), { connectionString }, {
-  connectionTimeoutMillis: 5000,
-  idleTimeoutMillis: 5000,
-  max: 1,
+  connectionTimeoutMillis: 2000,
+  idleTimeoutMillis: 3000,
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 0,
+  max: 5,
   singleton: true
 });
 

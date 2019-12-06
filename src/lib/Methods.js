@@ -33,16 +33,15 @@ exports.withTransaction = async function (runner) {
   const self = this;
   const client = await self.connect();
   let result;
+
   const rollback = async err => {
     try {
       await client._query('ROLLBACK');
     } catch (e) {
       console.warn('Could not rollback transaction, removing from pool');
-      client.release(e);
       e.rolledback = false;
       throw new PgLazyError(e);
     }
-    client.release();
     if (err.code === '40P01' || err.code === '40001') {
       return self.withTransaction(runner);
     }
@@ -55,7 +54,8 @@ exports.withTransaction = async function (runner) {
     await client._query('COMMIT');
   } catch (err) {
     return rollback(err);
+  } finally {
+    client.release();
   }
-  client.release();
   return result;
 };
