@@ -1063,6 +1063,11 @@ is-symbol@^1.0.2:
   dependencies:
     has-symbols "^1.0.0"
 
+is-travis@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/is-travis/-/is-travis-2.0.0.tgz#080389f2083ce39c0354baa3f89e7352b0fff28f"
+  integrity sha512-aCZFmQYDeip3yaHVmgooGSmBQ9quOunZl31ugBANy9OgzjwHFZ8Jga6cv4K1xZgNliI0bKD0Axuu1tCQuH9o/A==
+
 isarray@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
