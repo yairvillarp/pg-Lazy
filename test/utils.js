@@ -4,7 +4,7 @@ if (process.env.TRAVIS) {
   module.exports = {
     connectionString: {
       client: 'postgres://lazy_test_user:lazy_test_pw@localhost:5432/lazy_test',
-      pool: 'postgres://lazy_test_user:lazy_test_pw@localhost:5432/lazy_test'
+      pool: 'postgres://lazy_test_user:lazy_test_pw@localhost:5432/lazy_test_pool'
     },
     connectionObject: {
       user: 'lazy_test_user',
