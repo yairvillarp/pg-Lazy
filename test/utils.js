@@ -2,7 +2,10 @@
 
 if (process.env.TRAVIS) {
   module.exports = {
-    connectionString: 'postgres://lazy_test_user:lazy_test_pw@localhost:5432/lazy_test',
+    connectionString: {
+      client: 'postgres://lazy_test_user:lazy_test_pw@localhost:5432/lazy_test',
+      pool: 'postgres://lazy_test_user:lazy_test_pw@localhost:5432/lazy_test'
+    },
     connectionObject: {
       user: 'lazy_test_user',
       host: 'localhost',
