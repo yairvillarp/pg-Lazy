@@ -3,7 +3,13 @@
 
 Simple functional helpers for [node-postgres](https://www.npmjs.com/package/pg).
 
-`Requires Node >= 8.1.4 or ^9.0.0 or ^10.0.0 and node-postgres ^7.4.1`
+`Requires Node >= ^10.0.0 and node-postgres ^8.0.0`
+
+## Breaking Changes from v2.x.x to v3.x.x
+
+- `Pool` and `Client` are no longer an instance of `pg._Pool` and `pg._Client` respectively.
+- `isConnected` is renamed with `canConnect`
+- Now user proper ES6 class extends.
 
 ## Breaking Changes from v1.x.x to v2.x.x
 
@@ -67,8 +73,8 @@ async function(){
 ```
 ## Helpers
 
-- pg.Pool with prototype methods `query`,`many`, `one`, `none`, `withTransaction`, `isConnected`.
-- pg.Client with prototype methods `query`,`many`, `one`, `none`, `isConnected`.
+- pg.Pool with prototype methods `query`,`many`, `one`, `none`, `withTransaction`, `canConnect`.
+- pg.Client with prototype methods `query`,`many`, `one`, `none`, `canConnect`.
 - Extends both with `.prepared(name).{query,many,one}()`
 - All methods returns a Promise
 - Automatically defaults to Environment variables for DB config, that means you

@@ -10,18 +10,18 @@ describe('CONNECTION.TEST', () => {
     const { Pool } = pgLazy(require('pg'), connectionString);
     expect(Pool).to.not.be.undefined;
   });
-  it('pgLazy isConnected should return false if it cannot connect', async () => {
+  it('pgLazy canConnect should return false if it cannot connect', async () => {
     const { Pool } = pgLazy(require('pg'), { connectionString: connectionString2 });
     const pool = new Pool();
-    const { error, status } = await pool.isConnected();
+    const { error, status } = await pool.canConnect();
     expect(error).to.not.be.undefined;
     expect(status).to.be.false;
     pool.end();
   }).timeout(5000);
-  it('pgLazy isConnected should return true if it can connect', async () => {
-    const { Pool } = pgLazy(require('pg'), { connectionString });
+  it('pgLazy canConnect should return true if it can connect', async () => {
+    const { Pool } = pgLazy(require('pg'), { connectionString: connectionString.pool });
     const pool = new Pool();
-    const { error, status } = await pool.isConnected();
+    const { error, status } = await pool.canConnect();
     expect(error).to.be.undefined;
     expect(status).to.be.true;
     pool.end();
@@ -29,7 +29,7 @@ describe('CONNECTION.TEST', () => {
   it('pgLazy should connect ok using object type config', async () => {
     const { Pool } = pgLazy(require('pg'), connectionObject);
     const pool = new Pool();
-    const { error, status } = await pool.isConnected();
+    const { error, status } = await pool.canConnect();
     expect(error).to.be.undefined;
     expect(status).to.be.true;
     pool.end();

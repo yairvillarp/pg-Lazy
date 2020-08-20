@@ -1,5 +1,5 @@
 const SqlStatement = require('./SqlStatement');
-const { one, many } = require('./Methods');
+const { check } = require('../utils');
 class Prepared {
   constructor (name, toQuery) {
     this.name = name;
@@ -10,8 +10,17 @@ class Prepared {
     SqlStatement.check(statement);
     return this.toQuery(statement.named(this.name));
   }
+
+  async many (sql, params) {
+    const result = await this.query(sql, params);
+    return result.rows;
+  }
+
+  async one (sql, params) {
+    const result = await this.query(sql, params);
+    check(result.rowCount > 1, 'one() result has more than one row, use many() instead');
+    return result.rows[0];
+  }
 }
-Prepared.prototype.one = one;
-Prepared.prototype.many = many;
 
 module.exports = Prepared;

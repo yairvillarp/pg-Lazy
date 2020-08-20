@@ -5,14 +5,14 @@ const pgLazy = require('../');
 const { createTable, removeTable } = require('./init');
 const { connectionString, queryError } = require('./utils');
 const { expect } = require('chai');
-const { pg, Client, Pool, sql, _raw } = pgLazy(require('pg'), { connectionString, max: 5 });
+const { Client, sql, _raw } = pgLazy(require('pg'), { connectionString: connectionString.client });
+const { Pool } = pgLazy(require('pg'), { connectionString: connectionString.pool, max: 5 });
 
 const pool = new Pool();
-
 async function withClient (runner) {
   const client = new Client();
-  await client.connect();
   try {
+    await client.connect();
     await runner(client);
   } catch (err) {
     console.warn(err.stack || err.message);
@@ -20,7 +20,6 @@ async function withClient (runner) {
     await client.end();
   }
 }
-
 function cleanUp (p) {
   p.end();
   process.stdout.write('Shutting down Pool...\n\n');
@@ -36,7 +35,7 @@ before(() => {
 describe('INDEX.TEST', () => {
   describe('TEST CONNECTION', () => {
     it('test connection', async () => {
-      const { error, status } = await pool.isConnected();
+      const { error, status } = await pool.canConnect();
       expect(error).to.be.undefined;
       expect(status).to.be.true;
     });
@@ -70,12 +69,25 @@ describe('INDEX.TEST', () => {
       await withClient(async client => {
         try {
           await client.query('SELECT 1');
+          client.end();
         } catch (e) {
           expect(e.message).to.match(queryError);
         }
       });
     });
-
+    it('client.query() with callback', async () => {
+      await withClient(client => {
+        return new Promise((resolve, reject) => {
+          client.query(sql`SELECT * FROM bars WHERE n = ANY (${[1, 3]}) ORDER BY n`, null, function (error, result) {
+            expect(result.rows).to.eql([{ n: 1 }, { n: 3 }]);
+            if (error) {
+              return reject(error);
+            }
+            resolve();
+          });
+        });
+      });
+    });
     it('append() fails if untagged', async () => {
       try {
         await pool.query(sql`SELECT 1`.append('nope'));
@@ -181,7 +193,8 @@ describe('INDEX.TEST', () => {
 
     it('withTransaction can successfully rollback', async () => {
       try {
-        await pool.withTransaction(async () => {
+        await pool.withTransaction(async client => {
+          client.one(sql`SELECT 1 n`);
           throw new Error('fake error');
         });
       } catch (err) {
@@ -192,9 +205,9 @@ describe('INDEX.TEST', () => {
   // SINGLETON
   describe('SINGLETON', () => {
     it('pool should already be connected and initialized', async () => {
-      const p = pgLazy(require('pg'), { connectionString, max: 50 }, { singleton: true });
+      const p = pgLazy(require('pg'), { connectionString: connectionString.client, max: 5 }, { singleton: true });
 
-      const { error, status } = await p.pool.isConnected();
+      const { error, status } = await p.pool.canConnect();
       expect(error).to.be.undefined;
       expect(status).to.be.true;
 

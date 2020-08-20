@@ -14,12 +14,15 @@ if (process.env.TRAVIS) {
   };
 } else {
   module.exports = {
-    connectionString: 'postgres://tojrrrso:demc16cCK1w9MOJavZY6GEoDe-kj9y36@raja.db.elephantsql.com:5432/tojrrrso',
+    connectionString: {
+      client: 'postgres://tvsfucky:aTl1qCqVcAHcrDsFyYiiZmJsi0SAUHP0@drona.db.elephantsql.com:5432/tvsfucky',
+      pool: 'postgres://cnweanfy:jFaboCRZ6ZR27de0vprgKKGECbrm_KrS@drona.db.elephantsql.com:5432/cnweanfy'
+    },
     connectionObject: {
-      user: 'tojrrrso',
-      host: 'raja.db.elephantsql.com',
-      database: 'tojrrrso',
-      password: 'demc16cCK1w9MOJavZY6GEoDe-kj9y36',
+      user: 'tvsfucky',
+      host: 'drona.db.elephantsql.com',
+      database: 'tvsfucky',
+      password: 'aTl1qCqVcAHcrDsFyYiiZmJsi0SAUHP0',
       port: 5432
     },
     queryError: /must build query with sql or _raw/
