@@ -1,6 +1,6 @@
 {
   "name": "pg-lazy",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Helpers for node-postgres for Lazy devs",
   "main": "index.js",
   "directories": {
@@ -9,12 +9,12 @@
   },
   "scripts": {
     "lint": "semistandard 'src/**/*.js' 'test/**.js' --fix",
-    "test": "npm run lint && nyc mocha --reporter spec",
+    "test": "yarn lint && nyc mocha --reporter spec",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "patch": "npm version patch && npm publish",
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish",
-    "deploy": "git pull --rebase origin master && npm run lint && git push origin master"
+    "deploy": "git pull --rebase origin master &&yarn lint && git push origin master"
   },
   "semistandard": {
     "env": [
